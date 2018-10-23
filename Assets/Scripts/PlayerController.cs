@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour {
 	public double textTimerCurrent = 0;
 	private Vector3 screenPos;
 	private Rect TextArea = new Rect(0, 0, 400, 80);
+	private Vector3 lastForwardMove;
 
     private Rigidbody rb;
 
@@ -25,6 +26,7 @@ public class PlayerController : MonoBehaviour {
 		nextPosition = new Vector3(0.0f, 0.0f, 0.0f);
 		jewels = 0;
 		showJewelText = false;
+		lastForwardMove = new Vector3(1.0f, 1.0f, 1.0f);
     }
 	void jumpNow()
 	{
@@ -56,6 +58,12 @@ public class PlayerController : MonoBehaviour {
 		RaycastHit hit;
         float moveHorizontal = Input.GetAxis ("Horizontal");
         float moveVertical = Input.GetAxis ("Vertical");
+		Vector3 movement = new Vector3 (moveHorizontal, 0.0f, moveVertical);
+		movement.Normalize();
+		if(movement != new Vector3(0.0f, 0.0f, 0.0f))
+		{
+			lastForwardMove = movement;
+		}
 		if(Input.GetKeyDown(KeyCode.Space))
 		{
 			jumpNow();
@@ -65,16 +73,29 @@ public class PlayerController : MonoBehaviour {
 		{
 			canJump = true;
 		}
+		if(Input.GetKeyDown(KeyCode.Z))
+		{
+			attackPlease(rb.transform.position - (lastForwardMove));
+		}
 	
-
-        Vector3 movement = new Vector3 (moveHorizontal, 0.0f, moveVertical);
-		movement.Normalize();
-		nextPosition  = ((movement * speed * Time.deltaTime));
+		nextPosition  = (movement * speed * Time.deltaTime);
 		nextPosition = PlaceFree(nextPosition);
         rb.MovePosition(rb.transform.position - nextPosition);
 
-
     }
+	void attackPlease(Vector3 direction)
+	{
+		RaycastHit hit2;
+		if (Physics.Raycast(rb.transform.position, /* rb.transform.position +*/ (direction * 10), out hit2, 40.0f))
+		{
+			if(hit2.rigidbody.tag == "enemy")
+			{
+				hit2.rigidbody.AddForce(direction * 20);
+			}
+		}
+		
+	}
+
 	void OnGUI()
 	{
 		if(showJewelText)
@@ -115,4 +136,36 @@ public class PlayerController : MonoBehaviour {
 	}
 
 }
+/* 
+public class Attack : Collider
+{
+	private int timer;
+	void Start()
+	{
+		timer = 60;
+		isTrigger = true;
 
+	}
+	void Update()
+	{
+		if(timer > 0)
+		{
+			timer --;
+		}
+		else
+		{
+			Destroy(this);
+		}
+	}
+	void OnCollisionEnter(Collision col)
+	{
+		if(col.gameObject.tag == "enemy")
+		{
+			Destroy(col.gameObject);
+		}
+		else
+		{
+
+		}
+	}
+}*/
