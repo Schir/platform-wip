@@ -57,13 +57,18 @@ public class PlayerController : MonoBehaviour {
     {
 		RaycastHit hit;
         float moveHorizontal = Input.GetAxis ("Horizontal");
+		if(moveHorizontal > 0.02f || moveHorizontal < 0.02f);
+		{
+			lastForwardMove = new Vector3(moveHorizontal, 0.0f, 0.0f);
+			lastForwardMove.Normalize();
+		}
         float moveVertical = Input.GetAxis ("Vertical");
 		Vector3 movement = new Vector3 (moveHorizontal, 0.0f, moveVertical);
 		movement.Normalize();
-		if(movement != new Vector3(0.0f, 0.0f, 0.0f))
+		/*if(movement != new Vector3(0.0f, 0.0f, 0.0f))
 		{
 			lastForwardMove = movement;
-		}
+		}*/
 		if(Input.GetKeyDown(KeyCode.Space))
 		{
 			jumpNow();
@@ -86,11 +91,14 @@ public class PlayerController : MonoBehaviour {
 	void attackPlease(Vector3 direction)
 	{
 		RaycastHit hit2;
-		if (Physics.Raycast(rb.transform.position, /* rb.transform.position +*/ (direction * 10), out hit2, 40.0f))
+		if (Physics.BoxCast(/*rb.transform.position*/ direction, new Vector3 (0.5f, 0.5f, 0.5f), direction, out hit2, new Quaternion(0,0,0,0), 80.0f))//(Physics.Raycast(rb.transform.position, /* rb.transform.position +*/ (direction * 10), out hit2, 80.0f))
 		{
-			if(hit2.rigidbody.tag == "enemy")
+			if(hit2.collider.tag == "enemy")
 			{
-				hit2.rigidbody.AddForce(direction * 20);
+				if(hit2.rigidbody)
+				{
+					hit2.rigidbody.AddForce(direction * 20);
+				}
 			}
 		}
 		
