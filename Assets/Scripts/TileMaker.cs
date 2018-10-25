@@ -69,6 +69,7 @@ public class TileMaker : MonoBehaviour {
 			{
 				GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         		cube.transform.position = new Vector3(w, 0, h);
+				
 			}
 		}
 	}

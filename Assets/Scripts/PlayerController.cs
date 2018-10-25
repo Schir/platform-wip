@@ -15,18 +15,26 @@ public class PlayerController : MonoBehaviour {
 	private Vector3 screenPos;
 	private Rect TextArea = new Rect(0, 0, 400, 80);
 	private Vector3 lastForwardMove;
+	private float elapsedTime;
+	private float tempX;
+	private float tempY;
+	private float tempZ;
+	private float xtarg;
+	private float ytarg;
+	private float ztarg;
 
     private Rigidbody rb;
 
     void Start ()
     {
         rb = GetComponent<Rigidbody>();
-		speed = 6;
+		speed = 12;
 		canJump = true;
 		nextPosition = new Vector3(0.0f, 0.0f, 0.0f);
 		jewels = 0;
 		showJewelText = false;
 		lastForwardMove = new Vector3(1.0f, 1.0f, 1.0f);
+		elapsedTime = 0.0f;
     }
 	void jumpNow()
 	{
@@ -40,24 +48,76 @@ public class PlayerController : MonoBehaviour {
 			//do nothing
 		}
 	}
-	Vector3 PlaceFree(Vector3 check)
+	bool placeFree(Vector3 check)
 	{
+
 		if(rb.transform.position - check == gameObject.transform.position)
 		{
-			return Vector3.zero;
+			return false;
 		}
 		else
 		{
-			return check;
+			return true;
+		}
+		/* RaycastHit hitWall;
+		if(Physics.Raycast(rb.transform.position, check, out hitWall, check.magnitude))
+		{
+			if(hitWall.collider.tag == "wall")
+			{
+				return false;
+			}
+			else
+			{
+				return true;
+			}
+		}
+		else
+		{
+			return true;
+		}*/
+	}
+	float moveX(float x, float y, float z, float speed)
+	{
+		xtarg = x + speed;
+		if(placeFree(new Vector3(xtarg, y, z)))
+		{
+			return xtarg;
+		}
+		else
+		{
+			return 0;
 		}
 	}
-
+	float moveY(float x, float y, float z, float speed)
+	{
+		ytarg = y + speed;
+		if(placeFree(new Vector3(x, ytarg, z)))
+		{
+			return ytarg;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	float moveZ(float x, float y, float z, float speed)
+	{
+		ztarg = z + speed;
+		if(placeFree(new Vector3(x, y, ztarg)))
+		{
+			return ztarg;
+		}
+		else
+		{
+			return 0;
+		}
+	}
 
     void Update ()
     {
 		RaycastHit hit;
         float moveHorizontal = Input.GetAxis ("Horizontal");
-		if(moveHorizontal > 0.02f || moveHorizontal < 0.02f);
+		if(moveHorizontal > 0.06f || moveHorizontal < -0.06f)
 		{
 			lastForwardMove = new Vector3(moveHorizontal, 0.0f, 0.0f);
 			lastForwardMove.Normalize();
@@ -82,16 +142,24 @@ public class PlayerController : MonoBehaviour {
 		{
 			attackPlease(rb.transform.position - (lastForwardMove));
 		}
-	
-		nextPosition  = (movement * speed * Time.deltaTime);
-		nextPosition = PlaceFree(nextPosition);
-        rb.MovePosition(rb.transform.position - nextPosition);
-
-    }
+		tempX = movement.x;
+		tempY = movement.y;
+		tempZ = movement.z;
+		for(int i = 0; i < 6; i++)
+			{
+				tempX = moveX(tempX / 12.0f, tempY, tempZ, speed / 12.0f);
+				tempY = moveY(tempX, tempY / 12.0f, tempZ, speed / 12.0f);
+				tempZ = moveZ(tempX, tempY, tempZ / 12.0f, speed / 12.0f);
+				rb.MovePosition(rb.transform.position + new Vector3(tempX, tempY, tempZ) * Time.deltaTime);
+			}
+		
+			//nextPosition = PlaceFree(nextPosition);
+      
+	}
 	void attackPlease(Vector3 direction)
 	{
 		RaycastHit hit2;
-		if (Physics.BoxCast(/*rb.transform.position*/ direction, new Vector3 (0.5f, 0.5f, 0.5f), direction, out hit2, new Quaternion(0,0,0,0), 80.0f))//(Physics.Raycast(rb.transform.position, /* rb.transform.position +*/ (direction * 10), out hit2, 80.0f))
+		if (Physics.BoxCast(rb.transform.position /* direction*/, new Vector3 (1.0f, 0.5f, 1.0f), direction, out hit2, new Quaternion(0,0,0,0), 80.0f))//(Physics.Raycast(rb.transform.position, /* rb.transform.position +*/ (direction * 10), out hit2, 80.0f))
 		{
 			if(hit2.collider.tag == "enemy")
 			{
@@ -106,11 +174,11 @@ public class PlayerController : MonoBehaviour {
 
 	void OnGUI()
 	{
-		if(showJewelText)
+		screenPos = Camera.main.WorldToScreenPoint(transform.position) + (Vector3.up*3);
+		TextArea = new Rect(screenPos.x-100, screenPos.y-100, screenPos.x+100, screenPos.y + 50);
+		if(textTimerCurrent > 0)
 		{
-			screenPos = Camera.main.WorldToScreenPoint(transform.position) + (Vector3.up*3);
-			TextArea = new Rect(screenPos.x-100, screenPos.y-100, screenPos.x+100, screenPos.y + 50);
-			if(textTimerCurrent > 0)
+			if(showJewelText)
 			{
 				GUI.Label(TextArea, "Boy, I sure can't wait to sell this jewel\nat the playground so the kids can\n       smoke hard nicotine!");
 				textTimerCurrent -= 1;
@@ -120,7 +188,6 @@ public class PlayerController : MonoBehaviour {
 				showJewelText = false;
 			}
 		}
-
 	}
 
 
@@ -142,7 +209,13 @@ public class PlayerController : MonoBehaviour {
 			jump = new Vector3 (0.0f, 300, 0.0f);
 		}
 	}
-
+	void OnCollision(Collision col)
+	{
+		if(col.gameObject.tag == "wall")
+		{
+			rb.MovePosition(rb.transform.position + (Vector3.up * 4));
+		}
+	}
 }
 /* 
 public class Attack : Collider
@@ -177,3 +250,67 @@ public class Attack : Collider
 		}
 	}
 }*/
+
+/*
+Note to self:
+rewrite the movement code. The update function should probably do something like:
+movePlayer(position, speed)
+
+nextMove(Vector3 check, speed)
+{
+	float x = check.x;
+	float y = check.y
+	float z = check.z
+	for(int i = 0; i < 6; i++)
+	{
+		if(placeFree())
+	}
+
+}
+fuck it. I'll go check what I wrote in the Hero Core experiment and see if I can translate that into 3D. 
+
+okay here's what I did
+
+
+Vector3 moveX(float x, float y, float z, float speed)
+{
+	xtarg = x + speed;
+	if(place_free(new Vector3(xtarg, y, z)))
+	{
+		return new Vector3(xtarg, y, z);
+	}
+}
+Vector3 moveY(float x, float y, float z, float speed)
+{
+	ytarg = y + speed;
+	if(place_free(new Vector3(x, ytarg, z)))
+	{
+		return new Vector3(x, ytarg, z);
+	}
+}
+Vector3 moveZ(float x, float y, float z, float speed)
+{
+	Ztarg = y + speed;
+	if(place_free(new Vector3(x, ytarg, z)))
+	{
+		return new Vector3(x, ytarg, z);
+	}
+}
+
+void Update()
+{
+	for(var i = 0; i < 6; i++)
+	{
+		if(place_free(x+(dx/6), y))
+		{
+			moveX(x, y, (dx/6));
+		}
+		if(place_free(x, y+(dy / 6)))
+		{
+			moveY(x, y, dy/6);
+		}
+}
+
+
+
+ */
