@@ -129,10 +129,10 @@ public class PlayerController : MonoBehaviour {
 		dz = moveVertical;
 		Vector3 movement = new Vector3 (moveHorizontal, 0.0f, moveVertical);
 		movement.Normalize();
-		/*if(movement != new Vector3(0.0f, 0.0f, 0.0f))
+		if(movement != new Vector3(0.0f, 0.0f, 0.0f))
 		{
 			lastForwardMove = movement;
-		}*/
+		}
 		if(Input.GetKeyDown(KeyCode.Space))
 		{
 			jumpNow();
@@ -146,8 +146,8 @@ public class PlayerController : MonoBehaviour {
 		{
 			attackPlease(rb.transform.position - (lastForwardMove));
 		}
-		//for(int i = 0; i < 6; i++)
-		//	{
+		for(int i = 0; i < 6; i++)
+			{
 				if(placeFree(movement))
 				{
 				rb.transform.position = rb.transform.position - movement * Time.deltaTime * (speed / 12);
@@ -156,7 +156,7 @@ public class PlayerController : MonoBehaviour {
 				{
 					//
 				}
-		//	}
+			}
 		
 			//nextPosition = PlaceFree(nextPosition);
       
@@ -166,12 +166,9 @@ public class PlayerController : MonoBehaviour {
 		RaycastHit hit2;
 		if (Physics.BoxCast(rb.transform.position /* direction*/, new Vector3 (1.0f, 0.5f, 1.0f), direction, out hit2, new Quaternion(0,0,0,0), 80.0f))//(Physics.Raycast(rb.transform.position, /* rb.transform.position +*/ (direction * 10), out hit2, 80.0f))
 		{
-			if(hit2.collider.tag == "enemy")
+			if(hit2.rigidbody.tag == "enemy")
 			{
-				if(hit2.rigidbody)
-				{
-					hit2.rigidbody.AddForce(direction * 20);
-				}
+				hit2.rigidbody.AddForce(direction * 20);
 			}
 		}
 		

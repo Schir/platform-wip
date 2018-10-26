@@ -20,7 +20,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4611846373704560}
   - component: {fileID: 20865212912441456}
-  m_Layer: 5
+  - component: {fileID: 65841408103856200}
+  m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -55,13 +56,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1671876856816948}
-  m_LocalRotation: {x: 0, y: -0.953717, z: 0.30070576, w: 0}
-  m_LocalPosition: {x: 0.65, y: 3.72, z: 5}
+  m_LocalRotation: {x: 0.03688068, y: -0.91607225, z: 0.3897934, w: 0.08667506}
+  m_LocalPosition: {x: 1.21, y: 4.68, z: 4.43}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4619382624483452}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 35, y: -180, z: 0}
+  m_LocalEulerAnglesHint: {x: 46.1, y: -169.19, z: 0}
 --- !u!4 &4619382624483452
 Transform:
   m_ObjectHideFlags: 1
@@ -94,7 +95,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 80.2
+  field of view: 60
   orthographic: 0
   orthographic size: 5
   m_Depth: -2
@@ -123,9 +124,9 @@ Rigidbody:
   m_AngularDrag: 0.5
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 2
-  m_Constraints: 112
-  m_CollisionDetection: 2
+  m_Interpolate: 0
+  m_Constraints: 80
+  m_CollisionDetection: 0
 --- !u!64 &64538059845959896
 MeshCollider:
   m_ObjectHideFlags: 1
@@ -140,6 +141,18 @@ MeshCollider:
   m_InflateMesh: 0
   m_SkinWidth: 0.1
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &65841408103856200
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1671876856816948}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!95 &95237538474231448
 Animator:
   serializedVersion: 3
@@ -180,9 +193,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e5f999ddd55d984b9a78858451c66d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jewels: 0
-  showJewelText: 0
-  textTimerCurrent: 0
 --- !u!212 &212464925012816444
 SpriteRenderer:
   m_ObjectHideFlags: 1
