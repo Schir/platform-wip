@@ -22,7 +22,9 @@ public class PlayerController : MonoBehaviour {
 	private float xtarg;
 	private float ytarg;
 	private float ztarg;
-
+	private float dx;
+	private float dy;
+	private float dz;
     private Rigidbody rb;
 
     void Start ()
@@ -76,10 +78,10 @@ public class PlayerController : MonoBehaviour {
 			return true;
 		}*/
 	}
-	float moveX(float x, float y, float z, float speed)
+	/* float moveX(float x, float y, float z, float speed)
 	{
-		xtarg = x + speed;
-		if(placeFree(new Vector3(xtarg, y, z)))
+		xtarg = x - speed;
+		if(!placeFree(new Vector3(xtarg, y, z)))
 		{
 			return xtarg;
 		}
@@ -102,8 +104,8 @@ public class PlayerController : MonoBehaviour {
 	}
 	float moveZ(float x, float y, float z, float speed)
 	{
-		ztarg = z + speed;
-		if(placeFree(new Vector3(x, y, ztarg)))
+		ztarg = z - speed;
+		if(!placeFree(new Vector3(x, y, ztarg)))
 		{
 			return ztarg;
 		}
@@ -111,18 +113,20 @@ public class PlayerController : MonoBehaviour {
 		{
 			return 0;
 		}
-	}
+	}*/
 
     void Update ()
     {
 		RaycastHit hit;
         float moveHorizontal = Input.GetAxis ("Horizontal");
+		dx = moveHorizontal;
 		if(moveHorizontal > 0.06f || moveHorizontal < -0.06f)
 		{
 			lastForwardMove = new Vector3(moveHorizontal, 0.0f, 0.0f);
 			lastForwardMove.Normalize();
 		}
         float moveVertical = Input.GetAxis ("Vertical");
+		dz = moveVertical;
 		Vector3 movement = new Vector3 (moveHorizontal, 0.0f, moveVertical);
 		movement.Normalize();
 		/*if(movement != new Vector3(0.0f, 0.0f, 0.0f))
@@ -142,16 +146,17 @@ public class PlayerController : MonoBehaviour {
 		{
 			attackPlease(rb.transform.position - (lastForwardMove));
 		}
-		tempX = movement.x;
-		tempY = movement.y;
-		tempZ = movement.z;
-		for(int i = 0; i < 6; i++)
-			{
-				tempX = moveX(tempX / 12.0f, tempY, tempZ, speed / 12.0f);
-				tempY = moveY(tempX, tempY / 12.0f, tempZ, speed / 12.0f);
-				tempZ = moveZ(tempX, tempY, tempZ / 12.0f, speed / 12.0f);
-				rb.MovePosition(rb.transform.position + new Vector3(tempX, tempY, tempZ) * Time.deltaTime);
-			}
+		//for(int i = 0; i < 6; i++)
+		//	{
+				if(placeFree(movement))
+				{
+				rb.transform.position = rb.transform.position - movement * Time.deltaTime * (speed / 12);
+				}
+				else
+				{
+					//
+				}
+		//	}
 		
 			//nextPosition = PlaceFree(nextPosition);
       
@@ -213,7 +218,7 @@ public class PlayerController : MonoBehaviour {
 	{
 		if(col.gameObject.tag == "wall")
 		{
-			rb.MovePosition(rb.transform.position + (Vector3.up * 4));
+			rb.MovePosition(rb.transform.position + (Vector3.up * 8));
 		}
 	}
 }
@@ -269,7 +274,7 @@ nextMove(Vector3 check, speed)
 }
 fuck it. I'll go check what I wrote in the Hero Core experiment and see if I can translate that into 3D. 
 
-okay here's what I did
+okay here's what I might've done
 
 
 Vector3 moveX(float x, float y, float z, float speed)
