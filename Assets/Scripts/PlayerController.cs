@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour {
 	private float dy;
 	private float dz;
     private Rigidbody rb;
+    private float distance = 5.0f;
 
     void Start ()
     {
@@ -117,7 +118,8 @@ public class PlayerController : MonoBehaviour {
 
     void Update ()
     {
-		RaycastHit hit;
+        rb.transform.forward = Camera.main.transform.forward + rb.transform.position;
+        RaycastHit hit;
         float moveHorizontal = Input.GetAxis ("Horizontal");
 		dx = moveHorizontal;
 		if(moveHorizontal > 0.06f || moveHorizontal < -0.06f)
@@ -128,6 +130,7 @@ public class PlayerController : MonoBehaviour {
         float moveVertical = Input.GetAxis ("Vertical");
 		dz = moveVertical;
 		Vector3 movement = new Vector3 (moveHorizontal, 0.0f, moveVertical);
+        
 		movement.Normalize();
 		if(movement != new Vector3(0.0f, 0.0f, 0.0f))
 		{
